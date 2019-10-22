@@ -10,7 +10,7 @@ export default () => {
 	return (
 		<Router history={history}>
 			<Switch>
-				<Route exact path="/" component={LandingPage} />
+				<Route exact path="/" component={Welcome} />
 				<Route exact path="/welcome" component={Welcome} />
 				<Route exact path="/login" component={Login} />
 			</Switch>

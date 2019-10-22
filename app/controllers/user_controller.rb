@@ -1,0 +1,35 @@
+class UserController < ApplicationController
+ skip_before_action :verify_authenticity_token, :only => [:authUser]
+
+	def index
+	end
+
+	def authUser
+		user = User.find_by_email(params[:email])
+		if user.present?
+			render json: {
+	          statusCode: 200,
+	          status: true,
+	          message: 'User logged in successfully',
+	          user_email: user.email,
+	          token: JsonWebToken.encode(user_id: user.id)
+	        }
+		else
+			isUserCreated = User.create(email: params["email"], password: params[:password])
+			if isUserCreated
+				render json: {
+		          statusCode: 200,
+		          status: true,
+		          message: 'User created successfully',
+		          user_email: params[:email]
+		        }
+			else
+				render json: {
+		          statusCode: 403,
+		          status: false,
+		          message: 'User created successfully',
+		        }
+			end
+		end
+	end
+end

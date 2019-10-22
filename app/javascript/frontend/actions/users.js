@@ -1,43 +1,47 @@
 import * as actionTypes from './actionTypes'
 import axios from 'axios'
 import APP_CONSTANTS from '../app_constants'
-export const signInUserSuccess = (response) => ({
-    type: actionTypes.SIGN_IN_USER_SUCCESS,
-    payload: {
-        response,
-    }
-})
 
-export const signInUserError = (error) => ({
-    type: actionTypes.SIGN_IN_USER_ERROR,
+export function userAuthSuccess(response){
+    return {
+        type: actionTypes.USER_AUTH_SUCCESS,
+        payload: {
+            response,
+        }
+    }
+}
+
+export function userLogOutSuccess(response){
+    return {
+        type: actionTypes.SIGN_OUT_USER_SUCCESS,
+        payload: {
+            response,
+        }
+    }
+}
+
+export const createError = (error) => ({
+    type: actionTypes.USER_AUTH_ERROR,
     payload: {
         error
     }
 })
 
-export function signInUser(data) {
-  debugger
+export function userAuth(data) {
   return async function (dispatch) {
-    axios.post(`${APP_CONSTANTS.url}/api/user`,data).then((response) => {
-      dispatch(signInUserSuccess(response))
+    axios.post(`http://localhost:3000/user/authUser`,data).then((response) => {
+      dispatch(userAuthSuccess(response.data))
     })
     .catch(error => {
-      dispatch(createError(error.response.data.error))
+        alert(error)
+      dispatch(createError(error))
     })
   };
 }
 
+export function logout(data) {
+  return async function (dispatch) {
+    dispatch(userLogOutSuccess(true))
+  };
+}
 
-export const signOutUserSuccess = (response) => ({
-    type: actionTypes.SIGN_OUT_USER_SUCCESS,
-    payload: {
-        response,
-    }
-})
-
-export const signOutUserError = (error) => ({
-    type: actionTypes.SIGN_OUT_USER_ERROR,
-    payload: {
-        error
-    }
-})
