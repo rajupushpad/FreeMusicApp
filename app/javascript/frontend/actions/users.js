@@ -32,6 +32,8 @@ export function userAuth(data) {
     axios.post(`${APP_CONSTANTS.URL}/user/authUser`,data).then((response) => {
       if(response.data.statusCode == 404 && !response.data.status){
         alert(response.data.message)
+      }else if(response.data.message == 'account created'){
+        alert(response.data.message)
       }else{
         dispatch(userAuthSuccess(response.data))
       }
