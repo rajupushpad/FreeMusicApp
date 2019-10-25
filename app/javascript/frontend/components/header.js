@@ -34,7 +34,7 @@ class HeaderBar extends React.Component {
 				  <div class="collapse navbar-collapse" id="collapsibleNavbar">
 				    <ul class="navbar-nav ml-auto">
 				      <li class="nav-item">
-				        <a style={{color: 'white'}} class="nav-link" href="/welcome" onClick={()=>{debugger}}>Home</a>
+				        <a style={{color: 'white'}} class="nav-link" href="/" onClick={()=>{debugger}}>Home</a>
 				      </li>
 					{
 						this.props.auth_response.status ?

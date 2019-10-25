@@ -3,7 +3,7 @@ import ReactDom from 'react-dom';
 import HeaderBar from '../../components/header'
 import FooterBar from '../../components/footer'
 import { connect } from 'react-redux';
-import { uploadPost,addLike,removeLike } from '../../actions/posts'
+import { uploadPost,addLike,disLike,fetchAllPost } from '../../actions/posts'
 
 class Welcome extends React.Component {
 	constructor(props){
@@ -11,55 +11,14 @@ class Welcome extends React.Component {
 		this.state = {
 		 width: 0, 
 		 height: 0 ,
-		 videos: [
-		 	{
-		 		id: '1',
-		 		title:'demo titile',
-		 		description: 'demo description',
-		 		url: 'https://www.youtube.com/watch?v=usaoj2KUSGg',
-		 		likes: '12',
-		 		unlike: '12',
-		 		posted_by: 'a@gmail.com'
-
-		 	},
-		 	{
-		 		id: '2',
-		 		title:'demo titile',
-		 		description: 'demo description',
-		 		url: 'https://www.youtube.com/watch?v=usaoj2KUSGg',
-		 		likes: '12',
-		 		unlike: '12',
-		 		posted_by: 'a@gmail.com'
-
-		 	},
-		 	{
-		 		id: '3',
-		 		title:'demo titile',
-		 		description: 'demo description',
-		 		url: 'https://www.youtube.com/watch?v=usaoj2KUSGg',
-		 		likes: '12',
-		 		unlike: '12',
-		 		posted_by: 'a@gmail.com'
-
-		 	},
-		 	{
-		 		id: '4',
-		 		title:'demo titile',
-		 		description: 'demo description',
-		 		url: 'https://www.youtube.com/watch?v=usaoj2KUSGg',
-		 		likes: '12',
-		 		unlike: '12',
-		 		posted_by: 'a@gmail.com'
-
-		 	}
-		]
 		};
 	  this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 	}
 
 	componentDidMount() {
-	  this.updateWindowDimensions();
-	  window.addEventListener('resize', this.updateWindowDimensions);
+		this.props.fetchAllPost(this.props.auth_response.token)
+		this.updateWindowDimensions();
+		window.addEventListener('resize', this.updateWindowDimensions);
 	}
 
 	updateWindowDimensions() {
@@ -77,20 +36,42 @@ class Welcome extends React.Component {
 		this.props.uploadPost(data)
 	}
 
+	handleLike(post){
+		post.token = this.props.auth_response.token
+		this.props.auth_response.token ? this.props.addLike(post) : alert('Please login')
+	}
+
+	handleDisLike(post){
+		post.token = this.props.auth_response.token
+		this.props.auth_response.token ? this.props.disLike(post) : alert('Please login')
+	}
+
+	componentDidUpdate(prevProps,prevState){
+		if(this.props.auth_response != prevProps.auth_response || this.props.add_post_res != prevProps.add_post_res || this.props.add_like != prevProps.add_like || this.props.dis_like_res != prevProps.dis_like_res){
+			this.props.fetchAllPost(this.props.auth_response.token)
+		}
+	}
+
 	renderBodyPost(post){
 		return(
 			<div class='row' style={{marginTop: 15}}>
 				<div class="col-6">
 					<iframe width="420" height="315"
-						src="https://www.youtube.com/embed/tgbNymZ7vqY">
+						src={post.url}>
 						</iframe>
 				</div>
 				<div class="col-6" style={{flexDirection: 'row',    textAlign: 'left'}}>
 					<h4 style={{color: 'red'}}>{post.title}</h4>
-					<div style={{marginTop: 10}}>Shared By: {post.posted_by}</div>
+					<div style={{marginTop: 10}}>Shared By: {post.post_by}</div>
 					<div style={{marginTop: 10}} style={{flexDirection: 'row'}}>
-						<div>< img src={require('../../images/like.png')}/>: {post.likes}</div>
-						<div>< img src={require('../../images/unlike.png')}/>: {post.unlike}</div>
+						<div>
+						<img
+							onClick={()=>{this.handleLike(post)}}
+						 src={post.post_liked_by_current_user ? require('../../images/active-like.png') : require('../../images/like.png')}/>: {post.likes}</div>
+						<div>
+							<img 
+								onClick={()=>{this.handleDisLike(post)}}
+								src={post.post_disliked_by_current_user ? require('../../images/active-unlike.png') :require('../../images/unlike.png')}/>: {post.dislikes}</div>
 					</div>
 					<div style={{marginTop: 10}} style={{flexDirection: 'row'}}>
 						Description: {'\n'}
@@ -187,7 +168,7 @@ class Welcome extends React.Component {
 								this.state.shareMovie ?
 									this.shareMovie()
 								:
-								this.state.videos && this.state.videos.map((video)=>{
+								this.props.posts && this.props.posts.map((video)=>{
 									return this.renderBodyPost(video)
 								})
 							}
@@ -205,11 +186,14 @@ class Welcome extends React.Component {
 
 const mapStateToProps = (state) => {
   return{
-   auth_response: state.users.auth_response
-
+   auth_response: state.users.auth_response,
+   posts: state.posts.posts,
+   add_like: state.posts.like_res,
+   add_post_res: state.posts.post_add_success,
+   dis_like_res: state.posts.dis_like_res
   };
 }
 
 
-const WelcomeScrn = connect(mapStateToProps, { uploadPost,addLike,removeLike })(Welcome)
+const WelcomeScrn = connect(mapStateToProps, { uploadPost,addLike,disLike,fetchAllPost })(Welcome)
 export default WelcomeScrn

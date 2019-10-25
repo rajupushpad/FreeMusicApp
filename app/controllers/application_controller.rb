@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
 	protect_from_forgery with: :null_session
 	before_action :authenticate_request
-	skip_before_action :authenticate_request, :only => [:authUser]
+	skip_before_action :authenticate_request, :only => [:authUser, :fetch_posts]
 	attr_reader :current_user
 
   private
@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   	 result = JsonWebToken.decode(request.headers['Authorization'])
   	 if result.present?
   	 	user_id = result[0]['user_id']
-  	 	@current_user = User.find(user_id)
+  	 	current_user = User.find(user_id)
   	 	if current_user.present?
 
   	 	else

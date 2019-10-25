@@ -4,7 +4,8 @@ import * as actionTypes from '../actions/actionTypes'
 const initialState = {
 	post_add_success: {},
 	like_res: {},
-	unlike_res: {}
+	dis_like_res: {},
+	posts: []
 }
 
 const posts = (state = initialState, action) => {
@@ -15,8 +16,12 @@ const posts = (state = initialState, action) => {
 		case actionTypes.ADD_LIKES:
 			return { ...state, like_res: action.payload.response };
 
-		case actionTypes.REMOVE_LIKE:
-			return { ...state, post_add_success: action.payload.response };
+		case actionTypes.DISLIKE_SUCCESS:
+			return { ...state, dis_like_res: action.payload.response };
+
+		case actionTypes.HANDLE_POST_FETCH_SUCCESS:
+			return { ...state, posts: action.payload.response.posts };
+			
 		default:
 			return state
 	}

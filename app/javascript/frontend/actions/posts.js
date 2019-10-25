@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes'
 import axios from 'axios'
-import APP_CONSTANTS from '../app_constants'
+import {APP_CONSTANTS} from '../app_constants'
 
 export function uploadPostSuccess(response){
     return {
@@ -27,7 +27,7 @@ export function uploadPost(data) {
       }
     }
   return async function (dispatch) {
-    axios.post(`http://localhost:3000/posts`,data,header).then((response) => {
+    axios.post(`${APP_CONSTANTS.URL}/posts`,data,header).then((response) => {
       alert(response.data.message)
       dispatch(uploadPostSuccess(response.data))
     })
@@ -38,7 +38,7 @@ export function uploadPost(data) {
   };
 }
 
-export function handleSuccess(response){
+export function handleLikeSuccess(response){
     return {
         type: actionTypes.ADD_LIKES,
         payload: {
@@ -47,9 +47,18 @@ export function handleSuccess(response){
     }
 }
 
-export function removeLikeSuccess(response){
+export function handleDisLikeSuccess(response){
     return {
-        type: actionTypes.REMOVE_LIKE,
+        type: actionTypes.DISLIKE_SUCCESS,
+        payload: {
+            response,
+        }
+    }
+}
+
+export function handlePostFetchSuccess(response){
+    return {
+        type: actionTypes.HANDLE_POST_FETCH_SUCCESS,
         payload: {
             response,
         }
@@ -65,42 +74,64 @@ export function handleError(response){
     }
 }
 
-export  function addLike(likes) {
+export  function addLike(post) {
   let header = {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': likes.token
+        'Authorization': post.token
       }
     }
   return function (dispatch) {
     // Submit email/password to the server
-    axios.post(`${appConstants.WEB_SERVICE_URL}/likes`, likes, header)
+    axios.post(`${APP_CONSTANTS.URL}/likes`, post, header)
       .then(response => {
-        dispatch(handleSuccess(response.data))
+        dispatch(handleLikeSuccess(response.data))
       }).catch(error=> {
-          alert(error.response.data.message)
+          alert(error)
         // dispatch(createSignUpError(response.data.error))
       });
 
   };
 };
 
-export  function removeLike(likes) {
+export  function disLike(post) {
   let header = {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': likes.token
+        'Authorization': post.token
       }
     }
   return function (dispatch) {
     // Submit email/password to the server
-    axios.delete(`${appConstants.WEB_SERVICE_URL}/likes/`+likes.post_id, header)
+    axios.post(`${APP_CONSTANTS.URL}/dislike`,post, header)
       .then(response => {
-        dispatch(removeLikeSuccess(response.data))
+        dispatch(handleDisLikeSuccess(response.data))
       }).catch(error=> {
-          alert(error.response.data.message)
+          alert(error)
+        // dispatch(createSignUpError(response.data.error))
+      });
+
+  };
+};
+
+
+export  function fetchAllPost(token) {
+  let header = {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    }
+  return function (dispatch) {
+    // Submit email/password to the server
+    axios.get(`${APP_CONSTANTS.URL}/fetch-posts`, header)
+      .then(response => {
+        dispatch(handlePostFetchSuccess(response.data))
+      }).catch(error=> {
+          alert(error)
         // dispatch(createSignUpError(response.data.error))
       });
 

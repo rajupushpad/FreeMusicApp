@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes'
 import axios from 'axios'
-import APP_CONSTANTS from '../app_constants'
+import {APP_CONSTANTS} from '../app_constants'
 
 export function userAuthSuccess(response){
     return {
@@ -29,8 +29,12 @@ export const createError = (error) => ({
 
 export function userAuth(data) {
   return async function (dispatch) {
-    axios.post(`http://localhost:3000/user/authUser`,data).then((response) => {
-      dispatch(userAuthSuccess(response.data))
+    axios.post(`${APP_CONSTANTS.URL}/user/authUser`,data).then((response) => {
+      if(response.data.statusCode == 404 && !response.data.status){
+        alert(response.data.message)
+      }else{
+        dispatch(userAuthSuccess(response.data))
+      }
     })
     .catch(error => {
         alert(error)

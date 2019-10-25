@@ -7,13 +7,23 @@ class UserController < ApplicationController
 	def authUser
 		user = User.find_by_email(params[:email])
 		if user.present?
-			render json: {
-	          statusCode: 200,
-	          status: true,
-	          message: 'User logged in successfully',
-	          user_email: user.email,
-	          token: JsonWebToken.encode(user_id: user.id)
-	        }
+			if user.password == params[:password] 
+				render json: {
+		          statusCode: 200,
+		          status: true,
+		          message: 'User logged in successfully',
+		          user_email: user.email,
+		          token: JsonWebToken.encode(user_id: user.id)
+		        }
+			else
+				render json: {
+		          statusCode: 404,
+		          status: false,
+		          message: 'Wrong Pasword',
+		        }
+			end
+
+			
 		else
 			isUserCreated = User.create(email: params["email"], password: params[:password])
 			if isUserCreated
@@ -21,7 +31,8 @@ class UserController < ApplicationController
 		          statusCode: 200,
 		          status: true,
 		          message: 'User created successfully',
-		          user_email: params[:email]
+		          user_email: params[:email],
+		          token: JsonWebToken.encode(user_id: isUserCreated.id)
 		        }
 			else
 				render json: {
