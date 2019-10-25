@@ -11,7 +11,7 @@ class UserController < ApplicationController
 		          status: true,
 		          message: 'User logged in successfully',
 		          user_email: user.email,
-		          token: JsonWebToken.encode(user_id: user.id)
+		          token: JsonWebToken.encode(user_id: user.id) rescue nil
 		        }
 			else
 				render json: {
@@ -30,7 +30,7 @@ class UserController < ApplicationController
 		          status: true,
 		          message: 'User created successfully',
 		          user_email: params[:email],
-		          token: JsonWebToken.encode(user_id: isUserCreated.id)
+		          token: JsonWebToken.encode(user_id: isUserCreated.id) rescue nil
 		        }
 			else
 				render json: {
