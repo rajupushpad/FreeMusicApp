@@ -33,6 +33,7 @@ class Welcome extends React.Component {
 			description: this.state.description,
 			token: this.props.auth_response.token
 		}
+		alert(this.props.auth_response.token)
 		this.props.uploadPost(data)
 	}
 

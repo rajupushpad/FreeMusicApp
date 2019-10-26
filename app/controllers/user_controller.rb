@@ -7,6 +7,7 @@ class UserController < ApplicationController
 		if @user.present?
 			if @user.password == params[:password] 
 				 @token = JsonWebToken.encode(user_id: @user.id) rescue nil
+				 puts @token
 				render json: {
 		          statusCode: 200,
 		          status: true,
