@@ -26,15 +26,19 @@ class Welcome extends React.Component {
 	}
 
 	uploadMovie(){
-		this.setState({shareMovie: false})
+		
 		var data = {
 			url: this.state.url,
 			title: this.state.title,
 			description: this.state.description,
 			token: this.props.auth_response.token
 		}
-		alert(this.props.auth_response.token)
-		this.props.uploadPost(data)
+		if(data.url == null || data.title == null || data.description == null){
+			alert('All field required')
+		}else{
+			this.setState({shareMovie: false})
+			this.props.uploadPost(data)
+		}	
 	}
 
 	handleLike(post){

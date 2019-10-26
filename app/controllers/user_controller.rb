@@ -7,7 +7,6 @@ class UserController < ApplicationController
 		if @user.present?
 			if @user.password == params[:password] 
 				 @token = JsonWebToken.encode(user_id: @user.id) rescue nil
-				 puts @token
 				render json: {
 		          statusCode: 200,
 		          status: true,
@@ -25,7 +24,7 @@ class UserController < ApplicationController
 
 			
 		else
-			@User.create(email: params["email"], password: params[:password])
+			isUserCreated = User.create(email: params["email"], password: params[:password])
 			if isUserCreated
 				render json: {
 		          statusCode: 200,
