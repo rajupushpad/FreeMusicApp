@@ -3,15 +3,16 @@ class UserController < ApplicationController
 	end
 
 	def authUser
-		user = User.find_by_email(params[:email])
-		if user.present?
-			if user.password == params[:password] 
+		@user = User.find_by_email(params[:email])
+		if @user.present?
+			if @user.password == params[:password] 
+				 @token = JsonWebToken.encode(user_id: @user.id) rescue nil
 				render json: {
 		          statusCode: 200,
 		          status: true,
 		          message: 'User logged in successfully',
-		          user_email: user.email,
-		          token: JsonWebToken.encode(user_id: user.id) 
+		          user_email: @user.email,
+		          token: @token
 		        }
 			else
 				render json: {
@@ -23,7 +24,7 @@ class UserController < ApplicationController
 
 			
 		else
-			isUserCreated = User.create(email: params["email"], password: params[:password])
+			@User.create(email: params["email"], password: params[:password])
 			if isUserCreated
 				render json: {
 		          statusCode: 200,
